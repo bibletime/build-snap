@@ -1,0 +1,88 @@
+name: bibletime
+version: master-HEAD
+summary: BibleTime
+title: A Bible study tool
+description: BibleTime is a powerful cross platform Bible study tool.
+icon: gui/bibletime.svg
+confinement: strict
+grade: devel
+base: core18
+type: app
+
+apps:
+
+    bibletime:
+        command: wrapper.sh 
+        desktop: gui/bibletime.desktop
+        plugs:
+            - network
+            - unity7
+            - opengl
+            - desktop
+            - home
+            - x11
+            - wayland
+
+parts:
+
+    sword:
+        source-type: tar
+        source: http://crosswire.org/ftpmirror/pub/sword/source/v1.8/sword-1.8.1.tar.gz
+        plugin: cmake
+        configflags: 
+            - -DSWORD_NO_ICU=No 
+        build-packages:
+            - g++
+            - libcurl4-openssl-dev
+            - libclucene-dev
+        stage-packages:
+            - libcurl4
+            - libclucene-contribs1v5
+            - libclucene-core1v5
+
+    bibletime:
+        source-type: git
+        source: https://github.com/bibletime/bibletime.git
+        source-branch: master
+        plugin: cmake
+        configflags: [-DCMAKE_BUILD_TYPE=Release]
+        build-packages:
+            - g++
+            - qtbase5-dev
+            - qtbase5-dev-tools
+            - libqt5svg5-dev
+            - qttools5-dev
+            - qttools5-dev-tools
+            - qt5-qmake
+            - qtdeclarative5-dev
+            - libqt5x11extras5-dev
+        stage-packages:
+            - libcurl4
+            - libclucene-contribs1v5
+            - libclucene-core1v5
+            - libqt5core5a
+            - libqt5gui5
+            - libqt5svg5
+            - libqt5printsupport5
+            - libqt5quickwidgets5
+            - libqt5xml5
+            - libqt5quick5
+            - libqt5quickcontrols2-5
+            - libqt5x11extras5
+            - libqt5qml5
+            - libgtk2.0-0
+            - qml-module-qtquick2
+            - qml-module-qtquick-dialogs
+            - qml-module-qtquick-privatewidgets
+            - qml-module-qtquick-controls
+            - qml-module-qtquick-controls2
+            - qtdeclarative5-qtquick2-plugin
+            - qmlscene
+        after: [sword]
+
+    wrappers-copy:
+        plugin: dump
+        source: .
+        organize:
+          wrapper.sh: bin/wrapper.sh
+
