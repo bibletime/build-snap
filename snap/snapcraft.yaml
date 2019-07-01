@@ -3,7 +3,7 @@ version: master-HEAD
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
-icon: gui/bibletime.svg
+icon: gui/icon.svg
 confinement: strict
 grade: devel
 base: core18
@@ -12,7 +12,7 @@ type: app
 apps:
 
     bibletime:
-        command: wrapper.sh 
+        command: desktop-launch bibletime
         desktop: gui/bibletime.desktop
         plugs:
             - network
@@ -24,6 +24,33 @@ apps:
             - wayland
 
 parts:
+
+    desktop-qt5:
+        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+        source-depth: 1
+        source-subdir: qt
+
+        plugin: make
+        make-parameters: ["FLAVOR=qt5"]
+        build-packages:
+            - build-essential
+            - qtbase5-dev
+            - dpkg-dev
+        stage-packages:
+            - libxkbcommon0
+            - ttf-ubuntu-font-family
+            - dmz-cursor-theme
+            - light-themes
+            - adwaita-icon-theme
+            - gnome-themes-standard
+            - shared-mime-info
+            - libqt5gui5
+            - libgdk-pixbuf2.0-0
+            - libqt5svg5 # for loading icon themes which are svg
+            - try: [appmenu-qt5] # not available on core18
+            - locales-all
+            - xdg-user-dirs
+            - fcitx-frontend-qt5
 
     sword:
         source-type: tar
@@ -78,11 +105,5 @@ parts:
             - qml-module-qtquick-controls2
             - qtdeclarative5-qtquick2-plugin
             - qmlscene
-        after: [sword]
-
-    wrappers-copy:
-        plugin: dump
-        source: .
-        organize:
-          wrapper.sh: bin/wrapper.sh
+        after: [sword,desktop-qt5]
 
