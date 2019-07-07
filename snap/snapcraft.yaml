@@ -74,12 +74,13 @@ parts:
         plugin: cmake
         configflags: [-DCMAKE_BUILD_TYPE=Release]
         build-packages:
+            - qtchooser
+            - qttools5-dev
+            - qttools5-dev-tools
             - g++
             - qtbase5-dev
             - qtbase5-dev-tools
             - libqt5svg5-dev
-            - qttools5-dev
-            - qttools5-dev-tools
             - qt5-qmake
             - qtdeclarative5-dev
             - libqt5x11extras5-dev
@@ -107,3 +108,9 @@ parts:
             - qmlscene
         after: [sword,desktop-qt5]
 
+    extra-desktop-files:
+        plugin: dump
+        source: gui
+        organize:
+            '*.desktop': gui/   
+            '*.svg': gui/   
