@@ -1,5 +1,5 @@
 name: bibletime
-version: master-HEAD
+version: 3.0.0-beta2
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
@@ -13,6 +13,8 @@ apps:
 
     bibletime:
         command: desktop-launch bibletime
+        environment:
+            DISABLE_WAYLAND: 1
         desktop: gui/bibletime.desktop
         plugs:
             - network
@@ -68,9 +70,7 @@ parts:
             - libclucene-core1v5
 
     bibletime:
-        source-type: git
-        source: https://github.com/bibletime/bibletime.git
-        source-branch: master
+        source: https://github.com/bibletime/bibletime/releases/download/v3.0_beta1/bibletime-3.0_beta1.tar.xz
         plugin: cmake
         configflags: [-DCMAKE_BUILD_TYPE=Release]
         build-packages:
@@ -99,6 +99,10 @@ parts:
             - libqt5x11extras5
             - libqt5qml5
             - libgtk2.0-0
+            - mesa-utils
+            - mesa-utils-extra
+            - qtwayland5
+            - qt5dxcb-plugin
             - qml-module-qtquick2
             - qml-module-qtquick-dialogs
             - qml-module-qtquick-privatewidgets
