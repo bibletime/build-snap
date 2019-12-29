@@ -3,7 +3,6 @@ version: 3.0.0-beta2
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
-icon: gui/icon.svg
 confinement: strict
 grade: devel
 base: core18
@@ -70,7 +69,7 @@ parts:
             - libclucene-core1v5
 
     bibletime:
-        source: https://github.com/bibletime/bibletime/releases/download/v3.0_beta1/bibletime-3.0_beta1.tar.xz
+        source: https://github.com/bibletime/bibletime/releases/download/v3.0_beta2/bibletime-3.0_beta2.tar.xz
         plugin: cmake
         configflags: [-DCMAKE_BUILD_TYPE=Release]
         build-packages:
