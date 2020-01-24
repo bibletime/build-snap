@@ -3,6 +3,7 @@ version: 3.0.0-beta2
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
+icon: gui/bibletime.svg
 confinement: strict
 grade: devel
 base: core18
