@@ -1,18 +1,17 @@
 name: bibletime
-version: 3.0.0-beta2
+version: 3.0.0-rc1
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
-icon: gui/bibletime.svg
 confinement: strict
-grade: devel
+grade: stable
 base: core18
 type: app
 
 apps:
 
     bibletime:
-        command: desktop-launch bibletime
+        command: desktop-launch bibletime.sh
         environment:
             DISABLE_WAYLAND: 1
         desktop: gui/bibletime.desktop
@@ -26,6 +25,13 @@ apps:
             - wayland
 
 parts:
+
+    bibletime-sh:
+        plugin: dump
+        source: wrapper 
+        source-type: local
+        organize:
+            bibletime.sh: bin/bibletime.sh
 
     desktop-qt5:
         source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
@@ -47,7 +53,6 @@ parts:
             - gnome-themes-standard
             - shared-mime-info
             - libqt5gui5
-            - libgdk-pixbuf2.0-0
             - libqt5svg5 # for loading icon themes which are svg
             - try: [appmenu-qt5] # not available on core18
             - locales-all
@@ -69,10 +74,26 @@ parts:
             - libclucene-contribs1v5
             - libclucene-core1v5
 
+    bibletime-docs:
+        source: https://github.com/bibletime/generated_docs.git
+        source-type: git
+        plugin: nil
+        override-prime: |
+            cp -r $SNAPCRAFT_PART_BUILD/docs/v3.0_rc1/* $SNAPCRAFT_PRIME/share/doc/bibletime
+
     bibletime:
-        source: https://github.com/bibletime/bibletime/releases/download/v3.0_beta2/bibletime-3.0_beta2.tar.xz
+        source: https://github.com/bibletime/bibletime.git
+        source-type: git
+        source-branch: stable-3.0
         plugin: cmake
-        configflags: [-DCMAKE_BUILD_TYPE=Release]
+        configflags: [
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DBT_RUNTIME_DOCDIR=share/doc/bibletime",
+            "-DBUILD_HANDBOOK_HTML=OFF",
+            "-DBUILD_HANDBOOK_PDF=OFF",
+            "-DBUILD_HOWTO_HTML=OFF",
+            "-DBUILD_HOWTO_PDF=OFF" 
+        ]
         build-packages:
             - qtchooser
             - qttools5-dev
@@ -84,6 +105,11 @@ parts:
             - qt5-qmake
             - qtdeclarative5-dev
             - libqt5x11extras5-dev
+            - po4a
+            - xsltproc
+            - fop
+            - docbook-xml
+            - docbook-xsl
         stage-packages:
             - libcurl4
             - libclucene-contribs1v5
