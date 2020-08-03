@@ -1,5 +1,5 @@
 name: bibletime
-version: 3.0.0-rc1
+version: 3.0.0
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
@@ -79,12 +79,12 @@ parts:
         source-type: git
         plugin: nil
         override-prime: |
-            cp -r $SNAPCRAFT_PART_BUILD/docs/v3.0_rc1/* $SNAPCRAFT_PRIME/share/doc/bibletime
+            cp -r $SNAPCRAFT_PART_BUILD/docs/v3.0/* $SNAPCRAFT_PRIME/share/doc/bibletime
 
     bibletime:
         source: https://github.com/bibletime/bibletime.git
         source-type: git
-        source-branch: stable-3.0
+        source-tag: v3.0
         plugin: cmake
         configflags: [
             "-DCMAKE_BUILD_TYPE=Release",
