@@ -1,17 +1,18 @@
 name: bibletime
-version: 3.0.0
+version: 3.0.1
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
 confinement: strict
 grade: stable
-base: core18
+base: core20
+icon: gui/bibletime.svg
 type: app
 
 apps:
 
     bibletime:
-        command: desktop-launch bibletime.sh
+        command: bin/desktop-launch $SNAP/bin/bibletime.sh
         environment:
             DISABLE_WAYLAND: 1
         desktop: gui/bibletime.desktop
@@ -23,6 +24,7 @@ apps:
             - home
             - x11
             - wayland
+            - process-control
 
 parts:
 
@@ -61,10 +63,12 @@ parts:
 
     sword:
         source-type: tar
-        source: http://crosswire.org/ftpmirror/pub/sword/source/v1.8/sword-1.8.1.tar.gz
+        source: http://crosswire.org/ftpmirror/pub/sword/source/v1.9/sword-1.9.0.tar.gz
         plugin: cmake
-        configflags: 
-            - -DSWORD_NO_ICU=No 
+        cmake-parameters: [
+            "-DSWORD_NO_ICU=No",
+            "-DCMAKE_INSTALL_PREFIX=/usr"
+        ]
         build-packages:
             - g++
             - libcurl4-openssl-dev
@@ -78,15 +82,21 @@ parts:
         source: https://github.com/bibletime/generated_docs.git
         source-type: git
         plugin: nil
+        override-stage: |
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
         override-prime: |
-            cp -r $SNAPCRAFT_PART_BUILD/docs/v3.0/* $SNAPCRAFT_PRIME/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
+        after: [bibletime]
 
     bibletime:
-        source: https://github.com/bibletime/bibletime/archive/v3.0.zip
+        source: https://github.com/bibletime/bibletime/archive/v3.0.1.zip
         source-type: zip
         plugin: cmake
-        source-subdir: bibletime-3.0
-        configflags: [
+        source-subdir: bibletime-3.0.1
+        cmake-parameters: [
+            "-DCMAKE_INSTALL_PREFIX=/usr",
+            "-DFindSword_LIBS=${SNAPCRAFT_STAGE}/usr/lib/sword.lib",
+            "-DFindSword_INCS=${SNAPCRAFT_STAGE}/usr/include",
             "-DCMAKE_BUILD_TYPE=Release",
             "-DBT_RUNTIME_DOCDIR=share/doc/bibletime",
             "-DBUILD_HANDBOOK_HTML=OFF",
@@ -134,7 +144,6 @@ parts:
             - qml-module-qtquick-privatewidgets
             - qml-module-qtquick-controls
             - qml-module-qtquick-controls2
-            - qtdeclarative5-qtquick2-plugin
             - qmlscene
         after: [sword,desktop-qt5]
 

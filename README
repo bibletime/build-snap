@@ -18,7 +18,7 @@ your $HOME/.sword and $HOME/.bibletime.
 
 local build steps:
 
-cd to the "snap" directory containing snapcraft.yaml.
+cd to the directory above the "snap" directory containing snapcraft.yaml.
     snapcraft
     sudo snap install --dangerous bibletime_master-HEAD_amd64.snap
     which bibletime     (check to see if this is the snap version)
