@@ -83,14 +83,21 @@ parts:
         source-type: git
         plugin: nil
         override-stage: |
+            mkdir -p $SNAPCRAFT_STAGE/usr/share/doc/bibletime
             cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
         override-prime: |
+            mkdir -p $SNAPCRAFT_PRIME/usr/share/doc/bibletime
             cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
         after: [bibletime]
 
     bibletime:
         source: https://github.com/bibletime/bibletime/archive/v3.0.1.zip
         source-type: zip
+        override-pull: |
+            snapcraftctl pull
+            cd bibletime-3.0.1
+            pwd
+            patch -p1 <$SNAPCRAFT_STAGE/p0.patch
         plugin: cmake
         source-subdir: bibletime-3.0.1
         cmake-parameters: [
@@ -145,7 +152,7 @@ parts:
             - qml-module-qtquick-controls
             - qml-module-qtquick-controls2
             - qmlscene
-        after: [sword,desktop-qt5]
+        after: [sword,desktop-qt5,patches]
 
     extra-desktop-files:
         plugin: dump
@@ -153,3 +160,11 @@ parts:
         organize:
             '*.desktop': gui/   
             '*.svg': gui/   
+
+    patches:
+        source: patches
+        plugin: dump
+        prime: 
+            - p0.patch
+
+
