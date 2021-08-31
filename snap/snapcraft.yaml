@@ -1,5 +1,5 @@
 name: bibletime
-version: 3.0.1
+version: 3.0.2
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
@@ -77,6 +77,7 @@ parts:
             - libcurl4
             - libclucene-contribs1v5
             - libclucene-core1v5
+            - libssh-4
 
     bibletime-docs:
         source: https://github.com/bibletime/generated_docs.git
@@ -84,22 +85,21 @@ parts:
         plugin: nil
         override-stage: |
             mkdir -p $SNAPCRAFT_STAGE/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.2/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
         override-prime: |
             mkdir -p $SNAPCRAFT_PRIME/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.1/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.2/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
         after: [bibletime]
 
     bibletime:
-        source: https://github.com/bibletime/bibletime/archive/v3.0.1.zip
+        source: https://github.com/bibletime/bibletime/archive/v3.0.2.zip
         source-type: zip
         override-pull: |
             snapcraftctl pull
-            cd bibletime-3.0.1
+            cd bibletime-3.0.2
             pwd
-            patch -p1 <$SNAPCRAFT_STAGE/p0.patch
         plugin: cmake
-        source-subdir: bibletime-3.0.1
+        source-subdir: bibletime-3.0.2
         cmake-parameters: [
             "-DCMAKE_INSTALL_PREFIX=/usr",
             "-DFindSword_LIBS=${SNAPCRAFT_STAGE}/usr/lib/sword.lib",
@@ -142,6 +142,7 @@ parts:
             - libqt5x11extras5
             - libqt5qml5
             - libgtk2.0-0
+            - libssh-4
             - mesa-utils
             - mesa-utils-extra
             - qtwayland5
@@ -152,7 +153,8 @@ parts:
             - qml-module-qtquick-controls
             - qml-module-qtquick-controls2
             - qmlscene
-        after: [sword,desktop-qt5,patches]
+            - qt5-style-plugins # for mouse cursor theme fix
+        after: [sword,desktop-qt5,extra-desktop-files]
 
     extra-desktop-files:
         plugin: dump
@@ -160,11 +162,5 @@ parts:
         organize:
             '*.desktop': gui/   
             '*.svg': gui/   
-
-    patches:
-        source: patches
-        plugin: dump
-        prime: 
-            - p0.patch
 
 
