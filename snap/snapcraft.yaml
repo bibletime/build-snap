@@ -1,5 +1,5 @@
 name: bibletime
-version: 3.0.2
+version: 3.0.3
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
@@ -85,21 +85,21 @@ parts:
         plugin: nil
         override-stage: |
             mkdir -p $SNAPCRAFT_STAGE/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.2/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.3/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
         override-prime: |
             mkdir -p $SNAPCRAFT_PRIME/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.2/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.3/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
         after: [bibletime]
 
     bibletime:
-        source: https://github.com/bibletime/bibletime/archive/v3.0.2.zip
+        source: https://github.com/bibletime/bibletime/archive/v3.0.3.zip
         source-type: zip
         override-pull: |
             snapcraftctl pull
-            cd bibletime-3.0.2
+            cd bibletime-3.0.3
             pwd
         plugin: cmake
-        source-subdir: bibletime-3.0.2
+        source-subdir: bibletime-3.0.3
         cmake-parameters: [
             "-DCMAKE_INSTALL_PREFIX=/usr",
             "-DFindSword_LIBS=${SNAPCRAFT_STAGE}/usr/lib/sword.lib",
