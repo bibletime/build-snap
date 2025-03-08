@@ -1,106 +1,51 @@
 name: bibletime
-version: 3.0.3
+version: 3.1.0
 summary: BibleTime
 title: A Bible study tool
 description: BibleTime is a powerful cross platform Bible study tool.
 confinement: strict
 grade: stable
-base: core20
+base: core24
 icon: gui/bibletime.svg
 type: app
 
 apps:
-
     bibletime:
-        command: bin/desktop-launch $SNAP/bin/bibletime.sh
-        environment:
-            DISABLE_WAYLAND: 1
+        command: usr/bin/bibletime
         desktop: gui/bibletime.desktop
+        extensions:
+            - kde-neon-6
         plugs:
-            - network
             - unity7
-            - opengl
             - desktop
             - home
             - x11
             - wayland
-            - process-control
 
 parts:
-
-    bibletime-sh:
-        plugin: dump
-        source: wrapper 
-        source-type: local
-        organize:
-            bibletime.sh: bin/bibletime.sh
-
-    desktop-qt5:
-        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-        source-depth: 1
-        source-subdir: qt
-
-        plugin: make
-        make-parameters: ["FLAVOR=qt5"]
-        build-packages:
-            - build-essential
-            - qtbase5-dev
-            - dpkg-dev
-        stage-packages:
-            - libxkbcommon0
-            - ttf-ubuntu-font-family
-            - dmz-cursor-theme
-            - light-themes
-            - adwaita-icon-theme
-            - gnome-themes-standard
-            - shared-mime-info
-            - libqt5gui5
-            - libqt5svg5 # for loading icon themes which are svg
-            - try: [appmenu-qt5] # not available on core18
-            - locales-all
-            - xdg-user-dirs
-            - fcitx-frontend-qt5
-
-    sword:
-        source-type: tar
-        source: http://crosswire.org/ftpmirror/pub/sword/source/v1.9/sword-1.9.0.tar.gz
-        plugin: cmake
-        cmake-parameters: [
-            "-DSWORD_NO_ICU=No",
-            "-DCMAKE_INSTALL_PREFIX=/usr"
-        ]
-        build-packages:
-            - g++
-            - libcurl4-openssl-dev
-            - libclucene-dev
-        stage-packages:
-            - libcurl4
-            - libclucene-contribs1v5
-            - libclucene-core1v5
-            - libssh-4
-
     bibletime-docs:
         source: https://github.com/bibletime/generated_docs.git
         source-type: git
         plugin: nil
         override-stage: |
             mkdir -p $SNAPCRAFT_STAGE/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.3/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.1.0/* $SNAPCRAFT_STAGE/usr/share/doc/bibletime
         override-prime: |
             mkdir -p $SNAPCRAFT_PRIME/usr/share/doc/bibletime
-            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.0.3/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
+            cp -r ${SNAPCRAFT_PART_SRC}/docs/v3.1.0/* $SNAPCRAFT_PRIME/usr/share/doc/bibletime
         after: [bibletime]
 
     bibletime:
-        source: https://github.com/bibletime/bibletime/archive/v3.0.3.zip
+        source: https://github.com/bibletime/bibletime/archive/v3.1.0.zip
         source-type: zip
         override-pull: |
             snapcraftctl pull
-            cd bibletime-3.0.3
+            cd bibletime-3.1.0
             pwd
         plugin: cmake
-        source-subdir: bibletime-3.0.3
+        source-subdir: bibletime-3.1.0
         cmake-parameters: [
+            "-DUSE_QT6=ON",
             "-DCMAKE_INSTALL_PREFIX=/usr",
             "-DFindSword_LIBS=${SNAPCRAFT_STAGE}/usr/lib/sword.lib",
             "-DFindSword_INCS=${SNAPCRAFT_STAGE}/usr/include",
@@ -112,49 +57,15 @@ parts:
             "-DBUILD_HOWTO_PDF=OFF" 
         ]
         build-packages:
-            - qtchooser
-            - qttools5-dev
-            - qttools5-dev-tools
-            - g++
-            - qtbase5-dev
-            - qtbase5-dev-tools
-            - libqt5svg5-dev
-            - qt5-qmake
-            - qtdeclarative5-dev
-            - libqt5x11extras5-dev
-            - po4a
-            - xsltproc
-            - fop
-            - docbook-xml
-            - docbook-xsl
+            - libsword-dev
+            - libclucene-dev
+            - libproxy1v5
         stage-packages:
-            - libcurl4
-            - libclucene-contribs1v5
+            - libxkbcommon0
+            - xkb-data
             - libclucene-core1v5
-            - libqt5core5a
-            - libqt5gui5
-            - libqt5svg5
-            - libqt5printsupport5
-            - libqt5quickwidgets5
-            - libqt5xml5
-            - libqt5quick5
-            - libqt5quickcontrols2-5
-            - libqt5x11extras5
-            - libqt5qml5
-            - libgtk2.0-0
-            - libssh-4
-            - mesa-utils
-            - mesa-utils-extra
-            - qtwayland5
-            - qt5dxcb-plugin
-            - qml-module-qtquick2
-            - qml-module-qtquick-dialogs
-            - qml-module-qtquick-privatewidgets
-            - qml-module-qtquick-controls
-            - qml-module-qtquick-controls2
-            - qmlscene
-            - qt5-style-plugins # for mouse cursor theme fix
-        after: [sword,desktop-qt5,extra-desktop-files]
+            - libsword1.9.0t64
+        after: [extra-desktop-files]
 
     extra-desktop-files:
         plugin: dump
@@ -163,4 +74,10 @@ parts:
             '*.desktop': gui/   
             '*.svg': gui/   
 
-
+lint:
+  ignore:
+    - classic
+    - library:
+      - usr/lib/x86_64-linux-gnu/libicuio.so.74.2
+      - usr/lib/x86_64-linux-gnu/libicutest.so.74.2
+      - usr/lib/x86_64-linux-gnu/libicutu.so.74.2

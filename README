@@ -1,15 +1,8 @@
 
 This builds a snap package for BibleTime.
 
-This snap should be built using Ubuntu 18.04 or later.
+This snap should be built using Ubuntu 24.04 or later.
 Install snapd. See https://snapcraft.io for details. 
-
-Install the latest version of 
-snapcraft using "sudo snap install snapcraft". Also install multipass using snap.
-
-Do not add pkg-config because the wrong include path is produced by FindSword.cmake.
-The Qt version is determined by the runtime files. Use the runtime core18 (Qt 5.9.5)
-until core20 is available which will be when Ubuntu 20.04 releases.
 
 NOTE: Remember that a snap runs in its own file system. It will not use
 your $HOME/.sword and $HOME/.bibletime.
@@ -18,28 +11,42 @@ your $HOME/.sword and $HOME/.bibletime.
 
 local build steps:
 
-cd to the directory above the "snap" directory containing snapcraft.yaml.
-    snapcraft
-    sudo snap install --dangerous bibletime_master-HEAD_amd64.snap
-    which bibletime     (check to see if this is the snap version)
-    bibletime  (run it)
+create a build directory (<builddir>)
+
+cd to <builddir>
+
+git clone git@github.com:bibletime/build-snap.git
+
+From the <builddir> type "snapcraft" to build the snap file.
+
+Install the snap file like this:
+    sudo snap install --dangerous bibletime_3.1.0_amd64.snap
+
+Run the installed bibletime:
+    snap run bibletime  (run it)
+
+To debug the installed bibletime:
+    snap run -shell bibletime 
+
+To change the build edit ./snap/snapcraft.yaml
 
 
 
 remote build for snap store:
 
-In the snapcraft.yaml file edit the following values the stable release:
+In the ,/snap/snapcraft.yaml file edit the following values the stable release:
 
     grade: stable (or devel for non-stable release including release candidate) 
 
     bibletime:
          source: <path to the release source file archive.>
 
-Use the following command to remotely build BibleTime:
+Use the following command to remotely build BibleTime. This requires a
+ubuntu lunchpd login with access to develop BibleTime snaps.
     snapcraft remote-build
 
 When the build is complete push it to the ubuntu store:
-    snapcraft push --release beta  bibletime_3.0.0-beta2_amd64.snap
+    snapcraft push --release beta  bibletime_3.1.0_amd64.snap
 where --release is edge, beta, candidate, or don't use option for stable.
 
 To install from snap store:
